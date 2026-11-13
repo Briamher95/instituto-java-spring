@@ -13,6 +13,9 @@
         <!-- Clases persistentes que DataNucleus debe administrar. -->
         <class>com.programacion2.instituto.dominio.Persona</class>
         <class>com.programacion2.instituto.dominio.Alumno</class>
+        <class>com.programacion2.instituto.dominio.Profesor</class>
+        <class>com.programacion2.instituto.dominio.Curso</class>
+        <class>com.programacion2.instituto.dominio.Inscripcion</class>
 
         <!-- Ignora cualquier clase que no esté listada arriba. -->
         <exclude-unlisted-classes/>

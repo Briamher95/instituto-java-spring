@@ -1,5 +1,6 @@
 package com.programacion2.instituto.dominio;
 
+import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.InheritanceStrategy;
@@ -11,6 +12,7 @@ import javax.jdo.annotations.Unique;
 // detachable permite usar el objeto fuera del PersistenceManager.
 @PersistenceCapable(detachable = "true")
 // COMPLETE_TABLE: cada subclase concreta tiene su propia tabla con todas las columnas.
+// Las anotaciones @Column de esta clase se aplican en las tablas de Alumno y de Profesor.
 @Inheritance(strategy = InheritanceStrategy.COMPLETE_TABLE)
 public abstract class Persona {
 
@@ -19,19 +21,27 @@ public abstract class Persona {
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private int id;
 
-    // No puede haber dos personas con el mismo DNI.
+    // No puede haber dos personas con el mismo DNI (dentro de cada tabla).
+    // allowsNull = "false" genera la columna como NOT NULL.
     @Unique
+    @Column(allowsNull = "false", length = 20)
     private String dni;
 
+    @Column(allowsNull = "false", length = 100)
     private String nombre;
 
+    @Column(allowsNull = "false", length = 100)
     private String apellido;
 
+    // Opcional: la columna admite null.
+    @Column(allowsNull = "true", length = 100)
     private String email;
 
+    @Column(allowsNull = "true", length = 20)
     private String telefono;
 
     // Por defecto, toda persona nueva está activa.
+    // Al ser un boolean primitivo, la columna no admite null.
     private boolean activo = true;
 
     public Persona() {
