@@ -1,0 +1,11 @@
+/* Ajustes mínimos sobre Bootstrap. */
+
+/* Fondo gris claro para que el contenido blanco se distinga. */
+body {
+    background-color: #f4f6f8;
+}
+
+/* Limita el ancho del contenido principal. */
+main {
+    max-width: 960px;
+}

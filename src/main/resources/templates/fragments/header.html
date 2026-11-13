@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+    <!-- th:fragment da nombre a este bloque para reutilizarlo con th:replace. -->
+    <header th:fragment="encabezado">
+
+        <nav class="navbar navbar-expand navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" th:href="@{/}">Instituto</a>
+
+                <div class="navbar-nav">
+                    <a class="nav-link" th:href="@{/}">Inicio</a>
+                    <a class="nav-link" th:href="@{/alumnos}">Alumnos</a>
+                    <a class="nav-link" th:href="@{/alumnos/nuevo}">Nuevo alumno</a>
+                </div>
+            </div>
+        </nav>
+
+    </header>
+
+</body>
+</html>
