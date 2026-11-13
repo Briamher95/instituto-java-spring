@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!-- El dialecto SpringStandard de Thymeleaf reconoce los atributos con prefijo th:. -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${idProfesor} ? 'Editar profesor' : 'Nuevo profesor'">Profesor</title>
+    <!-- Bootstrap 5.3 por CDN, con versión fija. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+    <!-- th:replace reemplaza este elemento por el fragmento "encabezado". -->
+    <header th:replace="~{fragments/header :: encabezado}"></header>
+
+    <main class="container my-4 p-4 bg-white rounded shadow-sm">
+        <h2 th:text="${idProfesor} ? 'Editar profesor' : 'Registrar profesor'">Registrar profesor</h2>
+
+        <!-- Error de validación o de regla de negocio que manda el controlador. -->
+        <p class="mensaje mensaje-error" th:if="${error}" th:text="${error}">Ocurrió un error</p>
+
+        <!-- Un solo formulario para alta y edición: si hay idProfesor, se envía a /profesores/{id}. -->
+        <!-- required, type="email" y maxlength los revisa el navegador; el servicio vuelve a validar. -->
+        <form th:action="${idProfesor} ? @{/profesores/{id}(id=${idProfesor})} : @{/profesores}"
+              th:object="${profesor}" method="post" style="max-width: 450px;">
+
+            <div class="mb-3">
+                <label class="form-label" for="dni">DNI:</label>
+                <!-- th:field vincula el campo y conserva lo escrito si volvemos con un error. -->
+                <input type="text" class="form-control" id="dni" th:field="*{dni}" maxlength="20" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="nombre">Nombre:</label>
+                <input type="text" class="form-control" id="nombre" th:field="*{nombre}" maxlength="100" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="apellido">Apellido:</label>
+                <input type="text" class="form-control" id="apellido" th:field="*{apellido}" maxlength="100" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="email">Email (opcional):</label>
+                <input type="email" class="form-control" id="email" th:field="*{email}" maxlength="100">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" for="telefono">Teléfono (opcional):</label>
+                <input type="text" class="form-control" id="telefono" th:field="*{telefono}" maxlength="20">
+            </div>
+
+            <button class="btn btn-primary" type="submit">Guardar</button>
+
+            <!-- th:href genera el enlace para volver al listado de profesores. -->
+            <a class="btn btn-secondary" th:href="@{/profesores}">Cancelar</a>
+
+        </form>
+    </main>
+
+</body>
+</html>

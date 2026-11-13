@@ -9,3 +9,24 @@ body {
 main {
     max-width: 960px;
 }
+
+/* Base común de los mensajes flash (éxito o error) que llegan tras un redirect. */
+.mensaje {
+    padding: 10px 14px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+}
+
+/* Mensaje de operación exitosa: verde. */
+.mensaje-exito {
+    background-color: #e6f4ea;
+    border-color: #a8d5b5;
+    color: #1e6b34;
+}
+
+/* Mensaje de error: rojo. */
+.mensaje-error {
+    background-color: #fdecea;
+    border-color: #f1aeb5;
+    color: #a12622;
+}
