@@ -10,8 +10,14 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.programacion2.instituto.excepcion.ReglaNegocioException;
+
 @PersistenceCapable(detachable = "true")
 public class Curso {
+
+    // Largo máximo que revisa validar(); coincide con el length de @Column.
+    // Al ser static, DataNucleus no lo guarda en la base.
+    private static final int LARGO_NOMBRE = 50;
 
     // El identificador lo genera la base de datos (autoincremental).
     @PrimaryKey
@@ -114,6 +120,32 @@ public class Curso {
 
     public boolean tieneCupo() {
         return cupoDisponible() > 0;
+    }
+
+    // El formulario manda "" en los campos vacíos: quitamos espacios sobrantes
+    // y el nombre vacío queda en null.
+    public void normalizar() {
+        if (nombre == null || nombre.isBlank()) {
+            nombre = null;
+        } else {
+            nombre = nombre.trim();
+        }
+    }
+
+    // Se llama después de normalizar, así un nombre con solo espacios ya es null.
+    // Corta en el primer error: el mensaje nombra el campo que hay que corregir.
+    public void validar() {
+        if (nombre == null) {
+            throw new ReglaNegocioException("El nombre es obligatorio");
+        }
+
+        if (nombre.length() > LARGO_NOMBRE) {
+            throw new ReglaNegocioException("El nombre no puede superar los 50 caracteres");
+        }
+
+        if (cupoMaximo <= 0) {
+            throw new ReglaNegocioException("El cupo máximo debe ser un número entero mayor a 0");
+        }
     }
 
     // No imprime el profesor ni las inscripciones para evitar recursión entre toString.

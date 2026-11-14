@@ -61,8 +61,10 @@
                                th:href="@{/profesores/{id}/editar(id=${profesor.id})}">Editar</a>
 
                             <!-- Las acciones que modifican datos van siempre por POST. -->
+                            <!-- La baja deja sus cursos sin profesor: se avisa antes de enviar. -->
                             <form th:if="${profesor.activo}" method="post"
-                                  th:action="@{/profesores/{id}/baja(id=${profesor.id})}">
+                                  th:action="@{/profesores/{id}/baja(id=${profesor.id})}"
+                                  onsubmit="return confirm('¿Dar de baja a este profesor? Sus cursos quedarán sin profesor.');">
                                 <button class="btn btn-sm btn-outline-warning" type="submit">Dar de baja</button>
                             </form>
 

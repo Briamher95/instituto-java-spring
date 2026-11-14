@@ -112,7 +112,7 @@ public class ProfesorControlador {
     @PostMapping("/{id}/baja")
     public String darDeBaja(@PathVariable int id, RedirectAttributes redireccion) {
         servicio.darDeBaja(id);
-        redireccion.addFlashAttribute("mensaje", "Profesor dado de baja");
+        redireccion.addFlashAttribute("mensaje", "Profesor dado de baja y sus cursos desasignados");
         return "redirect:/profesores";
     }
 
