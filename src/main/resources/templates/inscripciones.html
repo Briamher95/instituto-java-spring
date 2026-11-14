@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!-- El dialecto SpringStandard de Thymeleaf reconoce los atributos con prefijo th:. -->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inscripciones</title>
+    <!-- Bootstrap 5.3 por CDN, con versión fija. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+    <!-- th:replace reemplaza este elemento por el fragmento "encabezado". -->
+    <header th:replace="~{fragments/header :: encabezado}"></header>
+
+    <main class="container my-4 p-4 bg-white rounded shadow-sm">
+        <h2>Inscripciones</h2>
+
+        <!-- Mensajes flash: llegan después de un redirect y se muestran una sola vez. -->
+        <p class="mensaje mensaje-exito" th:if="${mensaje}" th:text="${mensaje}">Operación realizada</p>
+        <p class="mensaje mensaje-error" th:if="${error}" th:text="${error}">Ocurrió un error</p>
+
+        <h3 class="h5 mt-4">Inscribir alumno</h3>
+
+        <!-- Sin alumnos activos o sin cursos con cupo no se puede inscribir: lo decimos. -->
+        <p class="mensaje mensaje-error" th:if="${#lists.isEmpty(alumnos)}">
+            No hay alumnos activos para inscribir. Registrá o reactivá un alumno primero.
+        </p>
+        <p class="mensaje mensaje-error" th:if="${#lists.isEmpty(cursos)}">
+            No hay cursos activos con cupo disponible. Registrá un curso, reactivalo o ampliá su cupo.
+        </p>
+
+        <form th:unless="${#lists.isEmpty(alumnos) or #lists.isEmpty(cursos)}"
+              th:action="@{/inscripciones}" method="post"
+              class="d-flex flex-wrap gap-2 align-items-end mb-4">
+
+            <div>
+                <label class="form-label" for="idAlumno">Alumno:</label>
+                <select class="form-select" id="idAlumno" name="idAlumno" required>
+                    <option value="">Elegí un alumno</option>
+                    <option th:each="alumno : ${alumnos}"
+                            th:value="${alumno.id}"
+                            th:text="${alumno.apellido + ', ' + alumno.nombre + ' (DNI ' + alumno.dni + ')'}">Pérez, Ana (DNI 12345678)</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="form-label" for="idCurso">Curso:</label>
+                <select class="form-select" id="idCurso" name="idCurso" required>
+                    <option value="">Elegí un curso</option>
+                    <!-- cupoDisponible() es un valor calculado, no un campo guardado. -->
+                    <option th:each="curso : ${cursos}"
+                            th:value="${curso.id}"
+                            th:text="${curso.nombre + ' (cupo disponible ' + curso.cupoDisponible() + ')'}">Programación (cupo disponible 25)</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Inscribir</button>
+        </form>
+
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Alumno</th>
+                    <th>DNI</th>
+                    <th>Curso</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <!-- th:each repite la fila por cada inscripción (las más recientes primero). -->
+                <tr th:each="inscripcion : ${inscripciones}">
+                    <td th:text="${inscripcion.alumno.apellido + ', ' + inscripcion.alumno.nombre}">Pérez, Ana</td>
+                    <td th:text="${inscripcion.alumno.dni}">12345678</td>
+                    <td th:text="${inscripcion.curso.nombre}">Programación</td>
+                    <!-- #temporals da formato a la fecha (LocalDate). -->
+                    <td th:text="${#temporals.format(inscripcion.fechaInscripcion, 'dd/MM/yyyy')}">14/11/2026</td>
+                    <td>
+                        <!-- Las acciones que modifican datos van siempre por POST. -->
+                        <form method="post"
+                              th:action="@{/inscripciones/{id}/eliminar(id=${inscripcion.id})}"
+                              onsubmit="return confirm('¿Desinscribir a este alumno del curso?');">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Desinscribir</button>
+                        </form>
+                    </td>
+                </tr>
+
+                <!-- th:if muestra la fila solo si la lista está vacía. -->
+                <tr th:if="${#lists.isEmpty(inscripciones)}">
+                    <td colspan="5">No hay inscripciones para mostrar.</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+</body>
+</html>
