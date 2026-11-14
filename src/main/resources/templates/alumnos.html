@@ -17,36 +17,75 @@
     <main class="container my-4 p-4 bg-white rounded shadow-sm">
         <h2>Listado de alumnos</h2>
 
-        <p>
-            <!-- th:href genera la URL del formulario de alta. -->
-            <a class="btn btn-primary" th:href="@{/alumnos/nuevo}">Registrar un alumno</a>
-        </p>
+        <!-- Mensajes flash: llegan después de un redirect y se muestran una sola vez. -->
+        <p class="mensaje mensaje-exito" th:if="${mensaje}" th:text="${mensaje}">Operación realizada</p>
+        <p class="mensaje mensaje-error" th:if="${error}" th:text="${error}">Ocurrió un error</p>
 
-        <table class="table table-striped">
+        <div class="d-flex flex-wrap gap-2 justify-content-between mb-3">
+            <!-- Búsqueda por GET: el texto queda en la URL (?buscar=...). -->
+            <form class="d-flex gap-2" th:action="@{/alumnos}" method="get">
+                <input type="search" class="form-control" name="buscar"
+                       placeholder="Buscar por apellido" th:value="${buscar}">
+                <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+                <a class="btn btn-link" th:if="${buscar}" th:href="@{/alumnos}">Ver todos</a>
+            </form>
+
+            <a class="btn btn-primary" th:href="@{/alumnos/nuevo}">Nuevo alumno</a>
+        </div>
+
+        <table class="table table-striped align-middle">
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
                     <th>DNI</th>
+                    <th>Apellido</th>
+                    <th>Nombre</th>
                     <th>Email</th>
                     <th>Teléfono</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
 
             <tbody>
                 <!-- th:each repite la fila por cada alumno de la lista del modelo. -->
                 <tr th:each="alumno : ${alumnos}">
-                    <!-- th:text reemplaza el texto de ejemplo por el valor de cada propiedad. -->
-                    <td th:text="${alumno.nombre}">Ana</td>
-                    <td th:text="${alumno.apellido}">Pérez</td>
                     <td th:text="${alumno.dni}">12345678</td>
+                    <td th:text="${alumno.apellido}">Pérez</td>
+                    <td th:text="${alumno.nombre}">Ana</td>
                     <td th:text="${alumno.email}">ana@correo.com</td>
                     <td th:text="${alumno.telefono}">1122334455</td>
+                    <td th:text="${alumno.activo} ? 'Activo' : 'Inactivo'">Activo</td>
+                    <td>
+                        <div class="d-flex flex-wrap gap-1">
+                            <a class="btn btn-sm btn-outline-primary"
+                               th:href="@{/alumnos/{id}/editar(id=${alumno.id})}">Editar</a>
+
+                            <!-- Las acciones que modifican datos van siempre por POST. -->
+                            <!-- La baja borra las inscripciones del alumno: se avisa antes de enviar. -->
+                            <form th:if="${alumno.activo}" method="post"
+                                  th:action="@{/alumnos/{id}/baja(id=${alumno.id})}"
+                                  onsubmit="return confirm('¿Dar de baja a este alumno? Se eliminarán todas sus inscripciones.');">
+                                <button class="btn btn-sm btn-outline-warning" type="submit">Dar de baja</button>
+                            </form>
+
+                            <form th:unless="${alumno.activo}" method="post"
+                                  th:action="@{/alumnos/{id}/reactivar(id=${alumno.id})}">
+                                <button class="btn btn-sm btn-outline-success" type="submit">Reactivar</button>
+                            </form>
+
+                            <!-- confirm() pide confirmación en el navegador antes de enviar. -->
+                            <form method="post"
+                                  th:action="@{/alumnos/{id}/eliminar(id=${alumno.id})}"
+                                  onsubmit="return confirm('¿Eliminar definitivamente este alumno?');">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
 
                 <!-- th:if muestra la fila solo si la lista está vacía. -->
                 <tr th:if="${#lists.isEmpty(alumnos)}">
-                    <td colspan="5">Todavía no hay alumnos registrados.</td>
+                    <td colspan="7">No hay alumnos para mostrar.</td>
                 </tr>
             </tbody>
         </table>
