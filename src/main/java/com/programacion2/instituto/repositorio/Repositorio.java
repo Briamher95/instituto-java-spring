@@ -64,9 +64,6 @@ public class Repositorio<T> implements IRepositorio<T> {
 
         PersistenceManager pm = pmf.getPersistenceManager();
 
-        // Al confirmar, el objeto se devuelve detached (usable tras cerrar el pm).
-        pm.setDetachAllOnCommit(true);
-
         // Profundidad máxima de las relaciones que se recuperan.
         pm.getFetchPlan().setMaxFetchDepth(2);
 
@@ -81,9 +78,14 @@ public class Repositorio<T> implements IRepositorio<T> {
             // Fuerza la carga de los campos del FetchPlan.
             pm.retrieve(objeto);
 
+            // Copia detached armada desde este objeto (usable tras cerrar el pm), como en listar.
+            // No usamos setDetachAllOnCommit: con relaciones en ciclo (curso -> inscripción
+            // -> curso) dejaba campos sin cargar y fallaba al volver a guardar el objeto.
+            T separado = pm.detachCopy(objeto);
+
             tx.commit();
 
-            return objeto;
+            return separado;
 
         } catch (RuntimeException e) {
 
