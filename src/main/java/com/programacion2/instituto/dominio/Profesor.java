@@ -11,14 +11,12 @@ import javax.jdo.annotations.Persistent;
 public class Profesor extends Persona {
 
     // Lado "uno" de la relación Profesor 1 --- N Curso.
-    // La relación la guarda el campo "profesor" de Curso (columna PROFESOR_ID).
-    // @Order con list-ordering: la lista se ordena por id y DataNucleus no
-    // agrega una columna de posición en la tabla de cursos.
+
     @Persistent(mappedBy = "profesor", defaultFetchGroup = "true")
     @Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "id ASC"))
     private ArrayList<Curso> cursos;
 
-    // Constructor vacío: lo necesitan JDO y los formularios de Spring MVC.
+    
     public Profesor() {
         super();
         cursos = new ArrayList<>();
@@ -38,7 +36,7 @@ public class Profesor extends Persona {
     }
 
     // Agrega el curso y completa el otro lado de la relación.
-    // Usa el setter de Curso (que no vuelve a llamar acá), así no hay bucle.
+    
     public void agregarCurso(Curso curso) {
         if (!cursos.contains(curso)) {
             cursos.add(curso);
