@@ -12,8 +12,7 @@ import com.programacion2.instituto.dominio.Alumno;
 import com.programacion2.instituto.dominio.Curso;
 import com.programacion2.instituto.dominio.Inscripcion;
 
-// Crea inscripciones por ids. No implementa IRepositorio, así que no compite
-// con el bean genérico Repositorio<T> cuando se inyecta un IRepositorio<...>.
+// Crea inscripciones por ids. 
 @Repository
 public class InscripcionRepositorio implements IInscripcionRepositorio {
 
@@ -38,8 +37,7 @@ public class InscripcionRepositorio implements IInscripcionRepositorio {
         try {
             tx.begin();
 
-            // Alumno y curso se buscan dentro de esta transacción (objetos persistentes,
-            // no copias desprendidas): solo se inserta la fila nueva de Inscripcion.
+            // Alumno y curso se buscan dentro de esta transacción 
             Alumno alumno = pm.getObjectById(Alumno.class, idAlumno);
             Curso curso = pm.getObjectById(Curso.class, idCurso);
 
