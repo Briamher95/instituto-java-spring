@@ -10,7 +10,7 @@ import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Unique;
 
 // Entidad intermedia entre Alumno y Curso, con su propia tabla.
-// Si la fila existe, el alumno está inscripto en el curso.
+
 @PersistenceCapable(detachable = "true")
 // Restricción única sobre el par: un alumno no puede inscribirse dos veces al mismo curso.
 @Unique(members = {"curso", "alumno"})
@@ -34,7 +34,7 @@ public class Inscripcion {
     @Column(allowsNull = "false")
     private LocalDate fechaInscripcion;
 
-    // Constructor vacío: lo necesita JDO.
+  
     public Inscripcion() {
     }
 
@@ -61,7 +61,7 @@ public class Inscripcion {
         return alumno;
     }
 
-    // Setter simple: no toca la lista del alumno (eso lo hace Alumno.agregarInscripcion).
+    // Setter simple: no toca la lista del alumno
     public void setAlumno(Alumno alumno) {
         this.alumno = alumno;
     }
