@@ -19,8 +19,7 @@ public class AlumnoServicio {
     // Se usa para borrar las inscripciones al dar de baja a un alumno.
     private final IRepositorio<Inscripcion> repositorioInscripciones;
 
-    // Spring inyecta los repositorios por el único constructor, sin usar @Autowired.
-    // Es el mismo bean genérico Repositorio, visto con dos tipos distintos.
+ 
     public AlumnoServicio(IRepositorio<Alumno> repositorio,
                           IRepositorio<Inscripcion> repositorioInscripciones) {
         this.repositorio = repositorio;
@@ -69,8 +68,7 @@ public class AlumnoServicio {
         repositorio.guardar(existente);
     }
 
-    // Baja lógica: el alumno queda inactivo y se borran sus inscripciones,
-    // así libera el cupo en los cursos. Reactivarlo no las restaura.
+
     public void darDeBaja(int id) {
         Alumno alumno = consultar(id);
 
@@ -78,8 +76,7 @@ public class AlumnoServicio {
             repositorioInscripciones.eliminar(Inscripcion.class, inscripcion.getId());
         }
 
-        // Volvemos a consultar: la copia anterior todavía tiene en su lista
-        // las inscripciones recién borradas, y no queremos guardarla así.
+
         alumno = consultar(id);
         alumno.setActivo(false);
         repositorio.guardar(alumno);
@@ -91,8 +88,7 @@ public class AlumnoServicio {
         repositorio.guardar(alumno);
     }
 
-    // Baja definitiva: solo si no tiene inscripciones. El repositorio no protege
-    // esta regla (DataNucleus falla al borrar un alumno con inscripciones), por eso se valida acá.
+    
     public void eliminar(int id) {
         Alumno alumno = consultar(id);
 
@@ -103,8 +99,7 @@ public class AlumnoServicio {
         repositorio.eliminar(Alumno.class, id);
     }
 
-    // buscar es "contiene", así que filtramos con equals para quedarnos con el DNI exacto.
-    // Solo mira la tabla de alumnos: un profesor con el mismo DNI no es un duplicado.
+   
     private void verificarDniLibre(String dni, int idExcluido) {
         boolean enUso = repositorio.buscar(Alumno.class, "dni", dni).stream()
                 .anyMatch(otro -> otro.getDni().equals(dni) && otro.getId() != idExcluido);
