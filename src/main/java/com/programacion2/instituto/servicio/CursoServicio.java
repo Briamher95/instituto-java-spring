@@ -14,7 +14,7 @@ import com.programacion2.instituto.excepcion.ReglaNegocioException;
 import com.programacion2.instituto.repositorio.IRepositorio;
 
 // Registra esta clase como un componente de la capa de servicios.
-// Acá viven las reglas de negocio de los cursos.
+
 @Service
 public class CursoServicio {
 
@@ -76,7 +76,7 @@ public class CursoServicio {
     }
 
     // Baja lógica: se borran las inscripciones (libera a los alumnos) y el curso
-    // queda inactivo. Conserva su profesor. Reactivarlo no devuelve las inscripciones.
+    // queda inactivo. Conserva su profesor.
     public void darDeBaja(int id) {
         Curso curso = consultar(id);
 
@@ -84,9 +84,7 @@ public class CursoServicio {
             repositorioInscripciones.eliminar(Inscripcion.class, inscripcion.getId());
         }
 
-        // Volvemos a consultar: la copia anterior todavía tiene en su lista
-        // las inscripciones recién borradas. activo cambia al final, así una
-        // baja interrumpida se puede repetir.
+   
         curso = consultar(id);
         curso.setActivo(false);
         repositorio.guardar(curso);
@@ -98,8 +96,6 @@ public class CursoServicio {
         repositorio.guardar(curso);
     }
 
-    // Baja definitiva: solo si no tiene inscripciones. Tener profesor no impide
-    // borrarlo: la clave foránea PROFESOR_ID está en la fila del propio curso.
     public void eliminar(int id) {
         Curso curso = consultar(id);
 
@@ -132,10 +128,6 @@ public class CursoServicio {
             throw new ReglaNegocioException("No se puede asignar un profesor inactivo");
         }
 
-        // Solo cambiamos el lado del curso, que es el dueño de la clave foránea.
-        // No usamos Profesor.agregarCurso: la lista de cursos del profesor es el lado
-        // inverso (mappedBy) y en el objeto desprendido puede estar desactualizada.
-        // DataNucleus la vuelve a armar desde PROFESOR_ID la próxima vez que se consulta.
         curso.setProfesor(profesor);
         repositorio.guardar(curso);
     }
@@ -147,7 +139,7 @@ public class CursoServicio {
             throw new ReglaNegocioException("El curso no tiene profesor asignado");
         }
 
-        // Igual que al asignar: solo se cambia el lado del curso (PROFESOR_ID queda en null).
+        // Igual que al asignar: solo se cambia el lado del curso 
         curso.setProfesor(null);
         repositorio.guardar(curso);
     }
