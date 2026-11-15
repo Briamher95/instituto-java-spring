@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class InicioControlador {
 
-    // Atiende GET / y devuelve la vista inicio.html.
     @GetMapping("/")
     public String inicio() {
         return "inicio";
