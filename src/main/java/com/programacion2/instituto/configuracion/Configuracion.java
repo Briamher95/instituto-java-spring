@@ -10,11 +10,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Configuracion {
 
-    // Registra la fábrica de persistencia como un bean de Spring.
-    // destroyMethod indica que Spring debe llamar a close() al cerrar la aplicación.
+ 
     @Bean(destroyMethod = "close")
     public PersistenceManagerFactory persistenceManagerFactory() {
-        // "Instituto" es el nombre de la unidad de persistencia de persistence.xml.
+    
         return JDOHelper.getPersistenceManagerFactory("Instituto");
     }
 }
