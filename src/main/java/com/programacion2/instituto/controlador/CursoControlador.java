@@ -29,7 +29,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping("/cursos")
 public class CursoControlador {
 
-    // Se muestra cuando el cupo no se puede convertir a número (texto, decimales o vacío).
+ 
     private static final String ERROR_CUPO = "El cupo máximo debe ser un número entero mayor a 0";
 
     private final CursoServicio servicio;
@@ -39,14 +39,12 @@ public class CursoControlador {
         this.servicio = servicio;
     }
 
-    // Se ejecuta antes de vincular cada formulario de este controlador.
+    
     @InitBinder
     public void configurarVinculacion(WebDataBinder binder) {
-        // Quita espacios al inicio y al final, y convierte "" en null.
+    
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
 
-        // Solo se vinculan estos campos: el formulario no puede cambiar activo,
-        // profesor ni inscripciones (el profesor se asigna con una acción aparte).
         binder.setAllowedFields("nombre", "cupoMaximo");
     }
 
@@ -65,8 +63,7 @@ public class CursoControlador {
         return "curso-form";
     }
 
-    // BindingResult va justo después del objeto: recibe los errores de conversión
-    // (por ejemplo, cupo "abc") en lugar de que Spring responda con un error 400.
+   
     @PostMapping
     public String guardar(
             @ModelAttribute("curso") Curso curso,
@@ -82,8 +79,6 @@ public class CursoControlador {
         try {
             servicio.guardar(curso);
         } catch (ReglaNegocioException e) {
-            // Volvemos al formulario SIN redirect: "curso" sigue en el modelo
-            // con lo que escribió el usuario, y el mensaje se muestra arriba.
             model.addAttribute("error", e.getMessage());
             return "curso-form";
         }
@@ -96,7 +91,7 @@ public class CursoControlador {
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable int id, Model model) {
         model.addAttribute("curso", servicio.consultar(id));
-        // El formulario usa idCurso para saber que es una edición y a dónde enviar.
+    
         model.addAttribute("idCurso", id);
         return "curso-form";
     }
@@ -195,15 +190,13 @@ public class CursoControlador {
         return "redirect:/cursos";
     }
 
-    // Datos que necesita curso-profesor.html: el curso (con su profesor actual)
-    // y la lista de profesores activos para el select.
+
     private void cargarPantallaProfesor(int id, Model model) {
         model.addAttribute("curso", servicio.consultar(id));
         model.addAttribute("profesores", servicio.profesoresDisponibles());
     }
 
-    // Si el id no existe (por ejemplo, un enlace viejo o un doble clic en Eliminar),
-    // volvemos a la lista con un mensaje en lugar de mostrar una página de error.
+
     @ExceptionHandler(JDOObjectNotFoundException.class)
     public String cursoInexistente(HttpServletRequest request) {
         RequestContextUtils.getOutputFlashMap(request).put("error", "El curso no existe");
