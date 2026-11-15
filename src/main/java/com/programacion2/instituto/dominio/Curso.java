@@ -19,7 +19,7 @@ public class Curso {
     // Al ser static, DataNucleus no lo guarda en la base.
     private static final int LARGO_NOMBRE = 50;
 
-    // El identificador lo genera la base de datos (autoincremental).
+   
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private int id;
@@ -33,17 +33,13 @@ public class Curso {
     // Por defecto, todo curso nuevo está activo.
     private boolean activo = true;
 
-    // Lado "muchos" de Profesor 1 --- N Curso: acá vive la clave foránea.
-    // Es opcional: un curso puede existir sin profesor asignado.
+    // Lado muchos digamos  de Profesor 1 --- N 
     @Persistent(defaultFetchGroup = "true")
     @Column(name = "PROFESOR_ID", allowsNull = "true")
     private Profesor profesor;
 
     // Lado "uno" de Curso 1 --- N Inscripcion.
-    // La relación la guarda el campo "curso" de Inscripcion (columna CURSO_ID).
-    // @Order con list-ordering: la lista se ordena por id al leerla. Sin esto,
-    // DataNucleus agrega una columna de posición (INSCRIPCIONES_INTEGER_IDX) en la
-    // tabla de inscripciones, que choca con la que genera Alumno.inscripciones.
+  
     @Persistent(mappedBy = "curso", defaultFetchGroup = "true")
     @Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "id ASC"))
     private ArrayList<Inscripcion> inscripciones;
