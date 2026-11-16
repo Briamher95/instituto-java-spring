@@ -64,7 +64,7 @@ public class Repositorio<T> implements IRepositorio<T> {
 
         PersistenceManager pm = pmf.getPersistenceManager();
 
-        // Profundidad máxima de las relaciones que se recuperan.
+       
         pm.getFetchPlan().setMaxFetchDepth(2);
 
         Transaction tx = pm.currentTransaction();
@@ -78,9 +78,7 @@ public class Repositorio<T> implements IRepositorio<T> {
             // Fuerza la carga de los campos del FetchPlan.
             pm.retrieve(objeto);
 
-            // Copia detached armada desde este objeto (usable tras cerrar el pm), como en listar.
-            // No usamos setDetachAllOnCommit: con relaciones en ciclo (curso -> inscripción
-            // -> curso) dejaba campos sin cargar y fallaba al volver a guardar el objeto.
+  
             T separado = pm.detachCopy(objeto);
 
             tx.commit();
@@ -105,7 +103,7 @@ public class Repositorio<T> implements IRepositorio<T> {
 
         PersistenceManager pm = pmf.getPersistenceManager();
 
-        // Profundidad máxima de las relaciones que se recuperan.
+    
         pm.getFetchPlan().setMaxFetchDepth(2);
 
         Transaction tx = pm.currentTransaction();
@@ -115,14 +113,10 @@ public class Repositorio<T> implements IRepositorio<T> {
         try {
             tx.begin();
 
-            // Consulta sin filtro: trae todos los objetos de la clase.
+        
             query = pm.newQuery(clase);
             List<T> resultados = query.executeList();
-
-            // Fuerza la carga de los campos del FetchPlan en toda la lista.
             pm.retrieveAll(resultados, true);
-
-            // Copias detached: se pueden usar después de cerrar el pm.
             List<T> resultadosSeparados = new ArrayList<>(
                     pm.detachCopyAll(resultados));
 
@@ -140,7 +134,6 @@ public class Repositorio<T> implements IRepositorio<T> {
 
         } finally {
 
-            // Liberamos la consulta y luego el PersistenceManager.
             if (query != null) {
                 query.closeAll();
             }
@@ -159,8 +152,7 @@ public class Repositorio<T> implements IRepositorio<T> {
         try {
             tx.begin();
 
-            // Recibimos clase + id (no un objeto detached): buscamos el objeto
-            // dentro de esta misma transacción y lo borramos (DELETE al confirmar).
+         
             T objeto = pm.getObjectById(clase, id);
             pm.deletePersistent(objeto);
 
@@ -205,8 +197,7 @@ public class Repositorio<T> implements IRepositorio<T> {
         try {
             tx.begin();
 
-            // "Contiene, sin distinguir mayúsculas": pasamos campo y texto a minúsculas.
-            // El texto va como parámetro (:texto), nunca concatenado en el filtro.
+       
             query = pm.newQuery(clase);
             query.setFilter("this." + campo + ".toLowerCase().indexOf(:texto) >= 0");
             query.setParameters(texto.toLowerCase(Locale.ROOT));
