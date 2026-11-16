@@ -30,7 +30,7 @@ public class AlumnoControlador {
 
     private final AlumnoServicio servicio;
 
-    // Spring inyecta el servicio por el único constructor, sin usar @Autowired.
+   
     public AlumnoControlador(AlumnoServicio servicio) {
         this.servicio = servicio;
     }
@@ -45,11 +45,11 @@ public class AlumnoControlador {
         binder.setAllowedFields("dni", "nombre", "apellido", "email", "telefono");
     }
 
-    // GET /alumnos, o GET /alumnos?buscar=texto para filtrar por apellido.
+
     @GetMapping
     public String listar(@RequestParam(name = "buscar", required = false) String buscar, Model model) {
         model.addAttribute("alumnos", servicio.buscar(buscar));
-        // Devolvemos el texto para que siga escrito en la caja de búsqueda.
+
         model.addAttribute("buscar", buscar);
         return "alumnos";
     }
@@ -70,8 +70,7 @@ public class AlumnoControlador {
             // El servicio valida los datos y la regla de DNI único.
             servicio.guardar(alumno);
         } catch (ReglaNegocioException e) {
-            // Volvemos al formulario SIN redirect: "alumno" sigue en el modelo
-            // con lo que escribió el usuario, y el mensaje se muestra arriba.
+           
             model.addAttribute("error", e.getMessage());
             return "alumno-form";
         }
@@ -99,7 +98,7 @@ public class AlumnoControlador {
         try {
             servicio.actualizar(id, alumno);
         } catch (ReglaNegocioException e) {
-            // El objeto vinculado no trae id (Persona no tiene setId), por eso lo pasamos aparte.
+          
             model.addAttribute("idAlumno", id);
             model.addAttribute("error", e.getMessage());
             return "alumno-form";
@@ -133,9 +132,6 @@ public class AlumnoControlador {
         }
         return "redirect:/alumnos";
     }
-
-    // Si el id no existe (por ejemplo, un enlace viejo o un doble clic en Eliminar),
-    // volvemos a la lista con un mensaje en lugar de mostrar una página de error.
     @ExceptionHandler(JDOObjectNotFoundException.class)
     public String alumnoInexistente(HttpServletRequest request) {
         RequestContextUtils.getOutputFlashMap(request).put("error", "El alumno no existe");
