@@ -30,7 +30,7 @@ public class ProfesorControlador {
 
     private final ProfesorServicio servicio;
 
-    // Spring inyecta el servicio por el único constructor, sin usar @Autowired.
+  
     public ProfesorControlador(ProfesorServicio servicio) {
         this.servicio = servicio;
     }
@@ -70,13 +70,12 @@ public class ProfesorControlador {
             // El servicio valida los datos y la regla de DNI único.
             servicio.guardar(profesor);
         } catch (ReglaNegocioException e) {
-            // Volvemos al formulario SIN redirect: "profesor" sigue en el modelo
-            // con lo que escribió el usuario, y el mensaje se muestra arriba.
+           
             model.addAttribute("error", e.getMessage());
             return "profesor-form";
         }
 
-        // El mensaje flash sobrevive al redirect y se muestra una sola vez.
+      
         redireccion.addFlashAttribute("mensaje", "Profesor registrado correctamente");
         return "redirect:/profesores";
     }
@@ -84,7 +83,7 @@ public class ProfesorControlador {
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable int id, Model model) {
         model.addAttribute("profesor", servicio.consultar(id));
-        // El formulario usa idProfesor para saber que es una edición y a dónde enviar.
+        
         model.addAttribute("idProfesor", id);
         return "profesor-form";
     }
@@ -99,7 +98,7 @@ public class ProfesorControlador {
         try {
             servicio.actualizar(id, profesor);
         } catch (ReglaNegocioException e) {
-            // El objeto vinculado no trae id (Persona no tiene setId), por eso lo pasamos aparte.
+          
             model.addAttribute("idProfesor", id);
             model.addAttribute("error", e.getMessage());
             return "profesor-form";
@@ -134,8 +133,7 @@ public class ProfesorControlador {
         return "redirect:/profesores";
     }
 
-    // Si el id no existe (por ejemplo, un enlace viejo o un doble clic en Eliminar),
-    // volvemos a la lista con un mensaje en lugar de mostrar una página de error.
+    
     @ExceptionHandler(JDOObjectNotFoundException.class)
     public String profesorInexistente(HttpServletRequest request) {
         RequestContextUtils.getOutputFlashMap(request).put("error", "El profesor no existe");
