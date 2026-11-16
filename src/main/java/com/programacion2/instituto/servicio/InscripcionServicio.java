@@ -16,7 +16,7 @@ import com.programacion2.instituto.repositorio.IInscripcionRepositorio;
 import com.programacion2.instituto.repositorio.IRepositorio;
 
 // Registra esta clase como un componente de la capa de servicios.
-// Acá viven las reglas para inscribir y desinscribir alumnos en cursos.
+
 @Service
 public class InscripcionServicio {
 
@@ -65,8 +65,7 @@ public class InscripcionServicio {
                 .toList();
     }
 
-    // Integer y no int: si el formulario llega sin elegir, avisamos con un mensaje.
-    // Las reglas se revisan en este orden y se corta en la primera que falla.
+    
     public void inscribir(Integer idAlumno, Integer idCurso) {
         if (idAlumno == null) {
             throw new ReglaNegocioException("Elegí un alumno");
@@ -96,7 +95,7 @@ public class InscripcionServicio {
             throw new ReglaNegocioException("El curso no tiene cupo disponible");
         }
 
-        // Se crea por ids: no se tocan las listas de alumno ni de curso.
+        // Se crea por ids
         repositorioAltas.crear(idAlumno, idCurso, LocalDate.now());
     }
 
