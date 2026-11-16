@@ -10,7 +10,7 @@ import com.programacion2.instituto.excepcion.ReglaNegocioException;
 import com.programacion2.instituto.repositorio.IRepositorio;
 
 // Registra esta clase como un componente de la capa de servicios.
-// Acá viven las reglas de negocio de los profesores.
+
 @Service
 public class ProfesorServicio {
 
@@ -19,8 +19,7 @@ public class ProfesorServicio {
     // Se usa para desasignar los cursos al dar de baja a un profesor.
     private final IRepositorio<Curso> repositorioCursos;
 
-    // Spring inyecta los repositorios por el único constructor, sin usar @Autowired.
-    // Es el mismo bean genérico Repositorio, visto con dos tipos distintos.
+    
     public ProfesorServicio(IRepositorio<Profesor> repositorio,
                             IRepositorio<Curso> repositorioCursos) {
         this.repositorio = repositorio;
@@ -69,21 +68,18 @@ public class ProfesorServicio {
         repositorio.guardar(existente);
     }
 
-    // Baja lógica: sus cursos quedan sin profesor y él queda inactivo.
-    // Reactivarlo no le devuelve los cursos.
+   
     public void darDeBaja(int id) {
         Profesor profesor = consultar(id);
 
         for (Curso curso : profesor.getCursos()) {
-            // Consultamos cada curso aparte y cambiamos solo su lado de la relación
-            // (PROFESOR_ID), que es el dueño de la clave foránea.
+       
             Curso actual = repositorioCursos.consultar(Curso.class, curso.getId());
             actual.setProfesor(null);
             repositorioCursos.guardar(actual);
         }
 
-        // Volvemos a consultar: la copia anterior todavía tiene la lista de cursos
-        // vieja. activo cambia al final, así una baja interrumpida se puede repetir.
+      
         profesor = consultar(id);
         profesor.setActivo(false);
         repositorio.guardar(profesor);
@@ -95,8 +91,7 @@ public class ProfesorServicio {
         repositorio.guardar(profesor);
     }
 
-    // Baja definitiva: solo si no tiene cursos. El repositorio no protege esta regla
-    // (DataNucleus falla al borrar un profesor con cursos), por eso se valida acá.
+
     public void eliminar(int id) {
         Profesor profesor = consultar(id);
 
@@ -107,7 +102,7 @@ public class ProfesorServicio {
         repositorio.eliminar(Profesor.class, id);
     }
 
-    // buscar es "contiene", así que filtramos con equals para quedarnos con el DNI exacto.
+
     private void verificarDniLibre(String dni, int idExcluido) {
         boolean enUso = repositorio.buscar(Profesor.class, "dni", dni).stream()
                 .anyMatch(otro -> otro.getDni().equals(dni) && otro.getId() != idExcluido);
