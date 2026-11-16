@@ -13,13 +13,11 @@ import com.programacion2.instituto.excepcion.ReglaNegocioException;
 
 // detachable permite usar el objeto fuera del PersistenceManager.
 @PersistenceCapable(detachable = "true")
-// COMPLETE_TABLE: cada subclase concreta tiene su propia tabla con todas las columnas.
-// Las anotaciones @Column de esta clase se aplican en las tablas de Alumno y de Profesor.
+
 @Inheritance(strategy = InheritanceStrategy.COMPLETE_TABLE)
 public abstract class Persona {
 
-    // Largos máximos que revisa validar(); coinciden con los length de @Column.
-    // Al ser static, DataNucleus no los guarda en la base.
+ 
     private static final int LARGO_DNI = 20;
     private static final int LARGO_NOMBRE = 100;
     private static final int LARGO_APELLIDO = 100;
@@ -32,7 +30,7 @@ public abstract class Persona {
     private int id;
 
     // No puede haber dos personas con el mismo DNI (dentro de cada tabla).
-    // allowsNull = "false" genera la columna como NOT NULL.
+    
     @Unique
     @Column(allowsNull = "false", length = 20)
     private String dni;
@@ -50,8 +48,7 @@ public abstract class Persona {
     @Column(allowsNull = "true", length = 20)
     private String telefono;
 
-    // Por defecto, toda persona nueva está activa.
-    // Al ser un boolean primitivo, la columna no admite null.
+  
     private boolean activo = true;
 
     public Persona() {
