@@ -11,15 +11,12 @@ import javax.jdo.annotations.Persistent;
 public class Alumno extends Persona {
 
     // Lado "uno" de la relación Alumno 1 --- N Inscripcion.
-    // mappedBy indica que la relación la guarda el campo "alumno" de Inscripcion
-    // (columna ALUMNO_ID en la tabla de inscripciones), no una tabla aparte.
-    // @Order con list-ordering: la lista se ordena por id y DataNucleus no
-    // agrega una columna de posición en la tabla de inscripciones.
+  
     @Persistent(mappedBy = "alumno", defaultFetchGroup = "true")
     @Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "id ASC"))
     private ArrayList<Inscripcion> inscripciones;
 
-    // Constructor vacío: lo necesitan JDO y el formulario de Spring MVC.
+ 
     public Alumno() {
         super();
         inscripciones = new ArrayList<>();
@@ -39,7 +36,7 @@ public class Alumno extends Persona {
     }
 
     // Agrega la inscripción y completa el otro lado de la relación.
-    // Usa el setter de Inscripcion (que no vuelve a llamar acá), así no hay bucle.
+  
     public void agregarInscripcion(Inscripcion inscripcion) {
         if (!inscripciones.contains(inscripcion)) {
             inscripciones.add(inscripcion);
