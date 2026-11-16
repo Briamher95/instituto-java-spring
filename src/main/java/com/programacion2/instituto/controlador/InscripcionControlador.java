@@ -25,12 +25,11 @@ public class InscripcionControlador {
 
     private final InscripcionServicio servicio;
 
-    // Spring inyecta el servicio por el único constructor, sin usar @Autowired.
+
     public InscripcionControlador(InscripcionServicio servicio) {
         this.servicio = servicio;
     }
 
-    // Una sola pantalla: el formulario para inscribir arriba y la tabla abajo.
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("alumnos", servicio.alumnosDisponibles());
@@ -67,8 +66,7 @@ public class InscripcionControlador {
         return "redirect:/inscripciones";
     }
 
-    // Red de seguridad: si algo no encontrado se escapa del servicio,
-    // volvemos a la pantalla con un mensaje en lugar de una página de error.
+  
     @ExceptionHandler(JDOObjectNotFoundException.class)
     public String inscripcionInexistente(HttpServletRequest request) {
         RequestContextUtils.getOutputFlashMap(request).put("error", "La inscripción no existe");
