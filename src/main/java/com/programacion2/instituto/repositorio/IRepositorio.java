@@ -12,6 +12,6 @@ public interface IRepositorio<T> {
 
     void eliminar(Class<T> clase, int id);
 
-    // campo: nombre del atributo String a filtrar; lo elige el programador, nunca el usuario.
+
     List<T> buscar(Class<T> clase, String campo, String texto);
 }

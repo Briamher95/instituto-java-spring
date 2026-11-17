@@ -41,7 +41,6 @@ public abstract class Persona {
     @Column(allowsNull = "false", length = 100)
     private String apellido;
 
-    // Opcional: la columna admite null.
     @Column(allowsNull = "true", length = 100)
     private String email;
 
@@ -114,8 +113,8 @@ public abstract class Persona {
         this.activo = activo;
     }
 
-    // El formulario manda "" en los campos vacíos: quitamos espacios sobrantes
-    // y los campos vacíos quedan en null.
+
+
     public void normalizar() {
         setDni(vacioANull(getDni()));
         setNombre(vacioANull(getNombre()));
@@ -124,8 +123,8 @@ public abstract class Persona {
         setTelefono(vacioANull(getTelefono()));
     }
 
-    // Se llama después de normalizar, así un campo con solo espacios ya es null.
-    // Corta en el primer error: el mensaje nombra el campo que hay que corregir.
+
+
     public void validar() {
         obligatorio(getDni(), "El DNI es obligatorio");
         obligatorio(getNombre(), "El nombre es obligatorio");
@@ -155,8 +154,7 @@ public abstract class Persona {
         }
     }
 
-    // Chequeo simple, sin expresiones regulares: sin espacios, una sola @,
-    // texto antes y después, y un punto en la parte de después (ej.: ana@correo.com).
+
     private boolean emailValido(String email) {
         int arroba = email.indexOf('@');
 
@@ -167,7 +165,7 @@ public abstract class Persona {
         String dominio = email.substring(arroba + 1);
         int punto = dominio.indexOf('.');
 
-        // El punto no puede ir pegado a la @ ni al final (ana@.com o ana@correo.).
+
         return punto > 0 && !dominio.endsWith(".");
     }
 

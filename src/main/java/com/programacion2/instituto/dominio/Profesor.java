@@ -10,7 +10,7 @@ import javax.jdo.annotations.Persistent;
 @PersistenceCapable(detachable = "true")
 public class Profesor extends Persona {
 
-    // Lado "uno" de la relación Profesor 1 --- N Curso.
+
 
     @Persistent(mappedBy = "profesor", defaultFetchGroup = "true")
     @Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "id ASC"))
@@ -35,7 +35,7 @@ public class Profesor extends Persona {
         this.cursos = cursos;
     }
 
-    // Agrega el curso y completa el otro lado de la relación.
+   
     
     public void agregarCurso(Curso curso) {
         if (!cursos.contains(curso)) {
@@ -44,7 +44,7 @@ public class Profesor extends Persona {
         curso.setProfesor(this);
     }
 
-    // No imprime los cursos para evitar recursión entre toString.
+
     @Override
     public String toString() {
         return "Profesor{" +

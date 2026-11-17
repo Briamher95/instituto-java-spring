@@ -15,7 +15,7 @@ import com.programacion2.instituto.excepcion.ReglaNegocioException;
 import com.programacion2.instituto.repositorio.IInscripcionRepositorio;
 import com.programacion2.instituto.repositorio.IRepositorio;
 
-// Registra esta clase como un componente de la capa de servicios.
+
 
 @Service
 public class InscripcionServicio {
@@ -26,10 +26,10 @@ public class InscripcionServicio {
 
     private final IRepositorio<Inscripcion> repositorio;
 
-    // Crea la inscripción por ids, sin guardar alumno ni curso desprendidos.
+
     private final IInscripcionRepositorio repositorioAltas;
 
-    // Spring inyecta los repositorios por el único constructor, sin usar @Autowired.
+
     public InscripcionServicio(IRepositorio<Alumno> repositorioAlumnos,
                                IRepositorio<Curso> repositorioCursos,
                                IRepositorio<Inscripcion> repositorio,
@@ -40,7 +40,6 @@ public class InscripcionServicio {
         this.repositorioAltas = repositorioAltas;
     }
 
-    // Todas las inscripciones, las más recientes primero (a igual fecha, la última creada).
     public List<Inscripcion> listar() {
         return repositorio.listar(Inscripcion.class).stream()
                 .sorted(Comparator.comparing(Inscripcion::getFechaInscripcion)
@@ -49,7 +48,6 @@ public class InscripcionServicio {
                 .toList();
     }
 
-    // Alumnos que se pueden inscribir: solo los activos, por apellido y nombre.
     public List<Alumno> alumnosDisponibles() {
         return repositorioAlumnos.listar(Alumno.class).stream()
                 .filter(Alumno::isActivo)
@@ -57,7 +55,6 @@ public class InscripcionServicio {
                 .toList();
     }
 
-    // Cursos que pueden recibir alumnos: activos y con cupo, por nombre.
     public List<Curso> cursosDisponibles() {
         return repositorioCursos.listar(Curso.class).stream()
                 .filter(curso -> curso.isActivo() && curso.tieneCupo())
@@ -79,7 +76,6 @@ public class InscripcionServicio {
             throw new ReglaNegocioException("No se puede inscribir: el alumno está dado de baja");
         }
 
-        // consultar trae el curso con sus inscripciones (y el alumno de cada una).
         Curso curso = consultarCurso(idCurso);
         if (!curso.isActivo()) {
             throw new ReglaNegocioException("No se puede inscribir: el curso está dado de baja");
@@ -95,11 +91,11 @@ public class InscripcionServicio {
             throw new ReglaNegocioException("El curso no tiene cupo disponible");
         }
 
-        // Se crea por ids
+        
         repositorioAltas.crear(idAlumno, idCurso, LocalDate.now());
     }
 
-    // Borra la fila de la inscripción; siempre está permitido y libera el cupo.
+    // Borra la fila de la inscripción;
     public void desinscribir(int id) {
         try {
             repositorio.eliminar(Inscripcion.class, id);
@@ -108,7 +104,7 @@ public class InscripcionServicio {
         }
     }
 
-    // Los ids llegan del formulario: si no existen, avisamos con un mensaje claro.
+    // Los ids llegan del formulario
     private Alumno consultarAlumno(int idAlumno) {
         try {
             return repositorioAlumnos.consultar(Alumno.class, idAlumno);

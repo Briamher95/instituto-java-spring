@@ -13,21 +13,20 @@ import com.programacion2.instituto.dominio.Profesor;
 import com.programacion2.instituto.excepcion.ReglaNegocioException;
 import com.programacion2.instituto.repositorio.IRepositorio;
 
-// Registra esta clase como un componente de la capa de servicios.
+
 
 @Service
 public class CursoServicio {
 
     private final IRepositorio<Curso> repositorio;
 
-    // Se usa para buscar el profesor que se asigna a un curso.
+
     private final IRepositorio<Profesor> repositorioProfesores;
 
-    // Se usa para borrar las inscripciones al dar de baja un curso.
+
     private final IRepositorio<Inscripcion> repositorioInscripciones;
 
-    // Spring inyecta los repositorios por el único constructor, sin usar @Autowired.
-    // Es el mismo bean genérico Repositorio, visto con tres tipos distintos.
+
     public CursoServicio(IRepositorio<Curso> repositorio,
                          IRepositorio<Profesor> repositorioProfesores,
                          IRepositorio<Inscripcion> repositorioInscripciones) {
@@ -40,7 +39,7 @@ public class CursoServicio {
         return repositorio.listar(Curso.class);
     }
 
-    // Busca por nombre (contiene, sin distinguir mayúsculas). Sin texto, devuelve todos.
+
     public List<Curso> buscar(String texto) {
         return repositorio.buscar(Curso.class, "nombre", texto);
     }
@@ -58,14 +57,14 @@ public class CursoServicio {
     public void actualizar(int id, Curso datos) {
         Curso existente = consultar(id);
 
-        // Copiamos solo los datos del formulario: activo, profesor e inscripciones no se tocan.
+
         existente.setNombre(datos.getNombre());
         existente.setCupoMaximo(datos.getCupoMaximo());
 
         existente.normalizar();
         existente.validar();
 
-        // No se puede achicar el cupo por debajo de los alumnos ya inscriptos.
+
         int inscriptos = existente.getInscripciones().size();
         if (existente.getCupoMaximo() < inscriptos) {
             throw new ReglaNegocioException(
@@ -75,8 +74,7 @@ public class CursoServicio {
         repositorio.guardar(existente);
     }
 
-    // Baja lógica: se borran las inscripciones (libera a los alumnos) y el curso
-    // queda inactivo. Conserva su profesor.
+
     public void darDeBaja(int id) {
         Curso curso = consultar(id);
 
@@ -106,7 +104,6 @@ public class CursoServicio {
         repositorio.eliminar(Curso.class, id);
     }
 
-    // Profesores que se pueden elegir al asignar: solo los activos, por apellido y nombre.
     public List<Profesor> profesoresDisponibles() {
         return repositorioProfesores.listar(Profesor.class).stream()
                 .filter(Profesor::isActivo)
@@ -114,7 +111,6 @@ public class CursoServicio {
                 .toList();
     }
 
-    // Un curso tiene un solo profesor: asignar uno nuevo reemplaza al anterior.
     public void asignarProfesor(int idCurso, int idProfesor) {
         Curso curso = consultar(idCurso);
 
@@ -139,12 +135,11 @@ public class CursoServicio {
             throw new ReglaNegocioException("El curso no tiene profesor asignado");
         }
 
-        // Igual que al asignar: solo se cambia el lado del curso 
+
         curso.setProfesor(null);
         repositorio.guardar(curso);
     }
 
-    // El id llega del formulario: si no existe, avisamos del profesor y no del curso.
     private Profesor consultarProfesor(int idProfesor) {
         try {
             return repositorioProfesores.consultar(Profesor.class, idProfesor);

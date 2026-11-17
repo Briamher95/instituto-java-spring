@@ -44,7 +44,7 @@ public class Alumno extends Persona {
         inscripcion.setAlumno(this);
     }
 
-    // No imprime las inscripciones para evitar recursión entre toString.
+
     @Override
     public String toString() {
         return "Alumno{" +

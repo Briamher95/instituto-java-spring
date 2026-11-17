@@ -41,7 +41,7 @@ public class AlumnoControlador {
         // Quita espacios al inicio y al final, y convierte "" en null.
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
 
-        // Solo se vinculan estos campos: el formulario no puede cambiar activo ni inscripciones.
+
         binder.setAllowedFields("dni", "nombre", "apellido", "email", "telefono");
     }
 

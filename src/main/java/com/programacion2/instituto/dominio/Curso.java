@@ -15,8 +15,7 @@ import com.programacion2.instituto.excepcion.ReglaNegocioException;
 @PersistenceCapable(detachable = "true")
 public class Curso {
 
-    // Largo máximo que revisa validar(); coincide con el length de @Column.
-    // Al ser static, DataNucleus no lo guarda en la base.
+
     private static final int LARGO_NOMBRE = 50;
 
    
@@ -27,24 +26,22 @@ public class Curso {
     @Column(allowsNull = "false", length = 50)
     private String nombre;
 
-    // int primitivo: la columna no admite null.
+
     private int cupoMaximo;
 
-    // Por defecto, todo curso nuevo está activo.
     private boolean activo = true;
 
-    // Lado muchos digamos  de Profesor 1 --- N 
+
     @Persistent(defaultFetchGroup = "true")
     @Column(name = "PROFESOR_ID", allowsNull = "true")
     private Profesor profesor;
 
-    // Lado "uno" de Curso 1 --- N Inscripcion.
   
     @Persistent(mappedBy = "curso", defaultFetchGroup = "true")
     @Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "id ASC"))
     private ArrayList<Inscripcion> inscripciones;
 
-    // Constructor vacío: lo necesitan JDO y los formularios de Spring MVC.
+
     public Curso() {
         inscripciones = new ArrayList<>();
     }
@@ -87,7 +84,7 @@ public class Curso {
         return profesor;
     }
 
-    // Setter simple: no toca la lista del profesor (eso lo hace Profesor.agregarCurso).
+
     public void setProfesor(Profesor profesor) {
         this.profesor = profesor;
     }
@@ -100,8 +97,7 @@ public class Curso {
         this.inscripciones = inscripciones;
     }
 
-    // Agrega la inscripción y completa el otro lado de la relación.
-    // Usa el setter de Inscripcion (que no vuelve a llamar acá), así no hay bucle.
+
     public void agregarInscripcion(Inscripcion inscripcion) {
         if (!inscripciones.contains(inscripcion)) {
             inscripciones.add(inscripcion);
@@ -109,7 +105,7 @@ public class Curso {
         inscripcion.setCurso(this);
     }
 
-    // Valor calculado: no es un campo, así que no se guarda en la base.
+
     public int cupoDisponible() {
         return cupoMaximo - inscripciones.size();
     }
@@ -118,8 +114,7 @@ public class Curso {
         return cupoDisponible() > 0;
     }
 
-    // El formulario manda "" en los campos vacíos: quitamos espacios sobrantes
-    // y el nombre vacío queda en null.
+
     public void normalizar() {
         if (nombre == null || nombre.isBlank()) {
             nombre = null;
@@ -128,8 +123,7 @@ public class Curso {
         }
     }
 
-    // Se llama después de normalizar, así un nombre con solo espacios ya es null.
-    // Corta en el primer error: el mensaje nombra el campo que hay que corregir.
+
     public void validar() {
         if (nombre == null) {
             throw new ReglaNegocioException("El nombre es obligatorio");
@@ -144,7 +138,7 @@ public class Curso {
         }
     }
 
-    // No imprime el profesor ni las inscripciones para evitar recursión entre toString.
+
     @Override
     public String toString() {
         return "Curso{" +

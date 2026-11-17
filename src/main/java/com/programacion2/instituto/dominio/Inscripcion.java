@@ -12,21 +12,20 @@ import javax.jdo.annotations.Unique;
 // Entidad intermedia entre Alumno y Curso, con su propia tabla.
 
 @PersistenceCapable(detachable = "true")
-// Restricción única sobre el par: un alumno no puede inscribirse dos veces al mismo curso.
+
 @Unique(members = {"curso", "alumno"})
 public class Inscripcion {
 
-    // El identificador lo genera la base de datos (autoincremental).
+
     @PrimaryKey
     @Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
     private int id;
 
-    // Lado "muchos" de Curso 1 --- N Inscripcion: acá vive la clave foránea.
     @Persistent(defaultFetchGroup = "true")
     @Column(name = "CURSO_ID", allowsNull = "false")
     private Curso curso;
 
-    // Lado "muchos" de Alumno 1 --- N Inscripcion: acá vive la clave foránea.
+
     @Persistent(defaultFetchGroup = "true")
     @Column(name = "ALUMNO_ID", allowsNull = "false")
     private Alumno alumno;
@@ -52,7 +51,6 @@ public class Inscripcion {
         return curso;
     }
 
-    // Setter simple: no toca la lista del curso (eso lo hace Curso.agregarInscripcion).
     public void setCurso(Curso curso) {
         this.curso = curso;
     }
@@ -61,7 +59,6 @@ public class Inscripcion {
         return alumno;
     }
 
-    // Setter simple: no toca la lista del alumno
     public void setAlumno(Alumno alumno) {
         this.alumno = alumno;
     }
@@ -74,7 +71,7 @@ public class Inscripcion {
         this.fechaInscripcion = fechaInscripcion;
     }
 
-    // No imprime el curso ni el alumno completos para evitar recursión entre toString.
+
     @Override
     public String toString() {
         return "Inscripcion{" +

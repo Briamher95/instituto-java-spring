@@ -12,21 +12,17 @@ import com.programacion2.instituto.dominio.Alumno;
 import com.programacion2.instituto.dominio.Curso;
 import com.programacion2.instituto.dominio.Inscripcion;
 
-// Crea inscripciones por ids. 
 @Repository
 public class InscripcionRepositorio implements IInscripcionRepositorio {
 
     private final PersistenceManagerFactory pmf;
 
-    // Spring inyecta la fábrica de persistencia por el único constructor.
+
     public InscripcionRepositorio(PersistenceManagerFactory pmf) {
         this.pmf = pmf;
     }
 
-    // Sin reglas de negocio: las revisa InscripcionServicio antes de llamar acá.
-    // Es el punto único donde, si algún día hubiera varios usuarios a la vez, se
-    // agregarían el candado sobre el curso y la revisión de cupo y duplicado
-    // dentro de esta misma transacción.
+
     @Override
     public void crear(int idAlumno, int idCurso, LocalDate fecha) {
 

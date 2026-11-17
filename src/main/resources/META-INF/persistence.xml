@@ -7,17 +7,17 @@
                  https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
              version="3.0">
 
-    <!-- El nombre debe coincidir con el de Configuracion y con el del plugin en el pom.xml. -->
+
     <persistence-unit name="Instituto">
 
-        <!-- Clases persistentes que DataNucleus debe administrar. -->
+        <!-- Las clases que persistern -->
         <class>com.programacion2.instituto.dominio.Persona</class>
         <class>com.programacion2.instituto.dominio.Alumno</class>
         <class>com.programacion2.instituto.dominio.Profesor</class>
         <class>com.programacion2.instituto.dominio.Curso</class>
         <class>com.programacion2.instituto.dominio.Inscripcion</class>
 
-        <!-- Ignora cualquier clase que no esté listada arriba. -->
+        <!--  -->
         <exclude-unlisted-classes/>
 
         <properties>
@@ -38,7 +38,7 @@
                 name="javax.jdo.option.ConnectionPassword"
                 value="instituto_tp"/>
 
-            <!-- Crea las tablas que falten al iniciar la aplicación. -->
+            <!-- Crea las tablas con datanucleus -->
             <property
                 name="datanucleus.schema.autoCreateAll"
                 value="true"/>

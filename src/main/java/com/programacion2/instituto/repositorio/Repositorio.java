@@ -11,7 +11,7 @@ import javax.jdo.Transaction;
 
 import org.springframework.stereotype.Repository;
 
-// Un único bean genérico: sirve para cualquier clase persistente.
+
 @Repository
 public class Repositorio<T> implements IRepositorio<T> {
 
@@ -26,35 +26,34 @@ public class Repositorio<T> implements IRepositorio<T> {
     public void guardar(T objeto) {
 
         // Obtenemos un PersistenceManager: administra los objetos persistentes
-        // y permite operar sobre la base de datos.
+
         PersistenceManager pm = pmf.getPersistenceManager();
 
         // La transacción agrupa las operaciones en una única unidad de trabajo.
         Transaction tx = pm.currentTransaction();
 
         try {
-            // Iniciamos la transacción.
+
             tx.begin();
 
-            // Hacemos persistente el objeto (INSERT al confirmar la transacción).
+
             pm.makePersistent(objeto);
 
-            // Confirmamos: se guardan definitivamente los cambios.
             tx.commit();
 
         } catch (RuntimeException e) {
 
-            // Si algo falló y la transacción sigue activa, deshacemos todo.
+            // Si algo falla deshacemos todo
             if (tx.isActive()) {
                 tx.rollback();
             }
 
-            // Relanzamos la excepción para que quien llamó conozca el error.
+
             throw e;
 
         } finally {
 
-            // Se ejecuta siempre: liberamos los recursos del PersistenceManager.
+            // liberamos los recursos del PersistenceManager.
             pm.close();
         }
     }
@@ -72,10 +71,10 @@ public class Repositorio<T> implements IRepositorio<T> {
         try {
             tx.begin();
 
-            // Busca el objeto por su identificador.
+
             T objeto = pm.getObjectById(clase, id);
 
-            // Fuerza la carga de los campos del FetchPlan.
+
             pm.retrieve(objeto);
 
   
@@ -174,13 +173,12 @@ public class Repositorio<T> implements IRepositorio<T> {
     @Override
     public List<T> buscar(Class<T> clase, String campo, String texto) {
 
-        // Sin texto para buscar, devolvemos todo.
+
         if (texto == null || texto.isBlank()) {
             return listar(clase);
         }
 
-        // El nombre del campo se arma dentro del filtro, así que NO puede venir del
-        // usuario. Por las dudas, aceptamos solo un identificador Java simple.
+
         if (campo == null || !campo.matches("[A-Za-z_][A-Za-z0-9_]*")) {
             throw new IllegalArgumentException("Nombre de campo inválido: " + campo);
         }
@@ -203,10 +201,9 @@ public class Repositorio<T> implements IRepositorio<T> {
             query.setParameters(texto.toLowerCase(Locale.ROOT));
             List<T> resultados = query.executeList();
 
-            // Fuerza la carga de los campos del FetchPlan en toda la lista.
+
             pm.retrieveAll(resultados, true);
 
-            // Copias detached: se pueden usar después de cerrar el pm.
             List<T> resultadosSeparados = new ArrayList<>(
                     pm.detachCopyAll(resultados));
 

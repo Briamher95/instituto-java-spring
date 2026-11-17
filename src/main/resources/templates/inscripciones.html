@@ -71,15 +71,15 @@
             </thead>
 
             <tbody>
-                <!-- th:each repite la fila por cada inscripción (las más recientes primero). -->
+
                 <tr th:each="inscripcion : ${inscripciones}">
                     <td th:text="${inscripcion.alumno.apellido + ', ' + inscripcion.alumno.nombre}">Pérez, Ana</td>
                     <td th:text="${inscripcion.alumno.dni}">12345678</td>
                     <td th:text="${inscripcion.curso.nombre}">Programación</td>
-                    <!-- #temporals da formato a la fecha (LocalDate). -->
+
                     <td th:text="${#temporals.format(inscripcion.fechaInscripcion, 'dd/MM/yyyy')}">14/11/2026</td>
                     <td>
-                        <!-- Las acciones que modifican datos van siempre por POST. -->
+
                         <form method="post"
                               th:action="@{/inscripciones/{id}/eliminar(id=${inscripcion.id})}"
                               onsubmit="return confirm('¿Desinscribir a este alumno del curso?');">
@@ -88,7 +88,7 @@
                     </td>
                 </tr>
 
-                <!-- th:if muestra la fila solo si la lista está vacía. -->
+
                 <tr th:if="${#lists.isEmpty(inscripciones)}">
                     <td colspan="5">No hay inscripciones para mostrar.</td>
                 </tr>

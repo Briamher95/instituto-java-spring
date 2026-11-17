@@ -9,14 +9,13 @@ import com.programacion2.instituto.dominio.Inscripcion;
 import com.programacion2.instituto.excepcion.ReglaNegocioException;
 import com.programacion2.instituto.repositorio.IRepositorio;
 
-// Registra esta clase como un componente de la capa de servicios.
-// Acá viven las reglas de negocio de los alumnos.
+
 @Service
 public class AlumnoServicio {
 
     private final IRepositorio<Alumno> repositorio;
 
-    // Se usa para borrar las inscripciones al dar de baja a un alumno.
+
     private final IRepositorio<Inscripcion> repositorioInscripciones;
 
  
@@ -30,7 +29,6 @@ public class AlumnoServicio {
         return repositorio.listar(Alumno.class);
     }
 
-    // Busca por apellido (contiene, sin distinguir mayúsculas). Sin texto, devuelve todos.
     public List<Alumno> buscar(String texto) {
         return repositorio.buscar(Alumno.class, "apellido", texto);
     }
@@ -43,7 +41,7 @@ public class AlumnoServicio {
         alumno.normalizar();
         alumno.validar();
 
-        // Un alumno nuevo todavía no tiene id (vale 0), así que no excluye a nadie.
+
         verificarDniLibre(alumno.getDni(), 0);
 
         repositorio.guardar(alumno);
@@ -52,7 +50,7 @@ public class AlumnoServicio {
     public void actualizar(int id, Alumno datos) {
         Alumno existente = consultar(id);
 
-        // Copiamos solo los datos del formulario: activo e inscripciones no se tocan.
+  
         existente.setDni(datos.getDni());
         existente.setNombre(datos.getNombre());
         existente.setApellido(datos.getApellido());
@@ -62,7 +60,7 @@ public class AlumnoServicio {
         existente.normalizar();
         existente.validar();
 
-        // Excluimos al propio alumno: conservar su DNI no es un duplicado.
+
         verificarDniLibre(existente.getDni(), id);
 
         repositorio.guardar(existente);
